@@ -1,0 +1,40 @@
+pipeline {
+    agent any
+
+   
+
+    stages {
+        stage('Checkout') {
+            steps {
+                // Ckeckout code from GitHub repository
+                git 'https://github.com/Matin1611/todo-app1.git'
+
+            }
+        }
+        
+        stage('Build Docker Image') {
+            steps {
+                // CBuild Docker Images
+                script{
+                    docker.image('docker:stable').inside('-u root') {
+                        sh 'docker build -t todo-app .'
+                    }
+                }
+
+            }
+        }
+        
+         stage('Run Test') {
+            steps {
+                // Run Docker Images
+                script{
+                    docker.image('todo-app').inside('-u root') {
+                        sh 'yarn test'
+                    }
+                }
+
+            }
+        }
+           
+        }
+    }
